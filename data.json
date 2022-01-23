@@ -1,0 +1,16 @@
+{
+  "abd@sda.cd":
+      {"firstName": "abdo",
+        "lastName": "gad",
+        "email": "abd@sda.cd",
+        "password": "1111111111",
+        "phone": "1111111111",
+        "projects": []},
+  "sd.ds@ds.cdf":
+      {"firstName": "sde",
+        "lastName": "sdef",
+        "email": "sd.ds@ds.cdf",
+        "password": "555555555",
+        "phone": "4444444444",
+        "projects": []}
+}
