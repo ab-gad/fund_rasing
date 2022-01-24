@@ -1,5 +1,6 @@
 import json
 import re
+from itertools import count
 
 class User:
     def __init__(self, firstName, lastName, email, password, phone, projects=[]):
@@ -10,10 +11,14 @@ class User:
         self.phone     = phone
         self.projects  = projects
 
-with open("projects/project_2_title.txt", "w") as f:
-    f.write("Hello world")
+lastID = ""
+with open("lastID.txt","r") as f:
+    lastID = int(f.read())
+
+print(lastID)
 
 class Project:
+    _ids = count(lastID+1)
     def __init__(self, owner, title, details, target, startDate, endDate):
         self.owner     = owner
         self.title     = title
@@ -21,6 +26,7 @@ class Project:
         self.target    = target
         self.startDate = startDate
         self.endDate   = endDate
+        self.id        = next(self._ids)
 
 def registeration():
     firstName = nameValidation("First")
@@ -76,8 +82,6 @@ def phoneValidation():
         print("Wrong Phone Number (only 10 numbers without first 0)")
         return phoneValidation()
 
-data["email"] = {userDAta}
-
 
 def updateData(instance_identifier, instance_dict):
     data = {}
@@ -125,20 +129,62 @@ def login():
 
 def welcome(user_dic):
     print(f"Welcome {user_dic['firstName']} {user_dic['lastName']}")
+    ownerName = f"{user_dic['firstName']} {user_dic['lastName']}"
+    option   = input("1) View All Projects\n2) Create Project\n3) Edit Your Projects" )
+    if option==2:
+        createProject(ownerName)
 
 def viewAllProjects():
-    pass
+    with open("projects.json", "r") as f:
+        projectData = json.load(f)
+        for i in projectData :
+            projectView = f"Project Title: {projectData[i]['title']} \n" \
+                          f"Created by: {projectData[i]['owner']} \n" \
+                          f"Target : {projectData[i]['target']}$ \n" \
+                          f"From {projectData[i]['startDate']} to {projectData[i]['endDate']}$ \n" \
+                          f"Details: {projectData[i]['details']}\n" \
+                          f"-----------------------------------------------"
+
+            print(projectView)
 
 def myProjects():
     pass
 
 def createProject(owner):
-    title   = input("Enter The Ptoject title")
-    details = input("Type some details")
+    title     = input("Enter The Ptoject title : ")
+    details   = input("Type some details : ")
+    target    = input("Type the Project Targer : ")
+    startDate = input("Enter the start date : ")
+    endDate   = input("Enter End Date : ")
+
+    newProject = Project(owner, title, details, target, startDate, endDate)
+    newProject_dict = newProject.__dict__
+
+    updateProjectsData(newProject_dict["id"], newProject_dict)
+    updateUserData()
+
+    with open("lastID.txt", "w") as f:
+        f.write(str(newProject_dict["id"]))
 
 
-login()
+
+def updateProjectsData(id , project_dict):
+    data = {}
+    with open("projects.json", "r") as f:
+        oldData = json.load(f)
+        print("old", oldData)
+
+        oldData[id] = project_dict
+        print("old After", oldData)
+        data = oldData
+
+    with open("projects.json", "w") as f:
+        json.dump(data, f)
+
+# login()
 # registeration()
 # regex = re.compile(r'([A-Za-z0-9]+[.-_])*[A-Za-z0-9]+@[A-Za-z0-9-]+(\.[A-Z|a-z]{2,})+')
 # x= r/
 
+# createProject("abdo")
+viewAllProjects()
