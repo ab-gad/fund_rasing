@@ -1,4 +1,4 @@
-#Simple Crowd-Funding Web app
+# Simple Crowd-Funding Web app
 
 ## Main Functionaliy
 
