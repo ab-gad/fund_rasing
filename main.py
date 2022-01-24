@@ -130,9 +130,16 @@ def login():
 def welcome(user_dic):
     print(f"Welcome {user_dic['firstName']} {user_dic['lastName']}")
     ownerName = f"{user_dic['firstName']} {user_dic['lastName']}"
-    option   = input("1) View All Projects\n2) Create Project\n3) Edit Your Projects" )
-    if option==2:
-        createProject(ownerName)
+    while True:
+        option = input("1) View All Projects\n2) Create a Project\n3) Edit Your Projects\n4) Sign out\n : ")
+        if option == "1":
+            viewAllProjects()
+        elif option == "2":
+            createProject(ownerName, user_dic)
+        elif option == "4":
+            break
+        else:
+            print("Wrong Options")
 
 def viewAllProjects():
     with open("projects.json", "r") as f:
@@ -150,7 +157,7 @@ def viewAllProjects():
 def myProjects():
     pass
 
-def createProject(owner):
+def createProject(owner, user_dict):
     title     = input("Enter The Ptoject title : ")
     details   = input("Type some details : ")
     target    = input("Type the Project Targer : ")
@@ -161,30 +168,47 @@ def createProject(owner):
     newProject_dict = newProject.__dict__
 
     updateProjectsData(newProject_dict["id"], newProject_dict)
-    updateUserData()
+    updateUserData(newProject_dict["id"], user_dict)
 
     with open("lastID.txt", "w") as f:
         f.write(str(newProject_dict["id"]))
-
 
 
 def updateProjectsData(id , project_dict):
     data = {}
     with open("projects.json", "r") as f:
         oldData = json.load(f)
-        print("old", oldData)
+        # print("old", oldData)
 
         oldData[id] = project_dict
-        print("old After", oldData)
+        # print("old After", oldData)
         data = oldData
 
     with open("projects.json", "w") as f:
         json.dump(data, f)
 
-# login()
+def updateUserData (id, user_dict):
+    print("id",id, "dict", user_dict)
+    data = {}
+    with open("data.json", "r") as f:
+        oldData = json.load(f)
+        print("old", oldData)
+
+        user_dict["projects"].append(id)
+        print("dict Updated",user_dict)
+
+        userEmail = user_dict["email"]
+
+        oldData[userEmail] = user_dict
+        print("old After", oldData)
+        data = oldData
+
+    with open("data.json", "w") as f:
+        json.dump(data, f)
+login()
 # registeration()
 # regex = re.compile(r'([A-Za-z0-9]+[.-_])*[A-Za-z0-9]+@[A-Za-z0-9-]+(\.[A-Z|a-z]{2,})+')
 # x= r/
 
 # createProject("abdo")
-viewAllProjects()
+# viewAllProjects()
